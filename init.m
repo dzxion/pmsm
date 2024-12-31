@@ -2,8 +2,8 @@ clear
 clc
 
 % plant
-pa.J = 0.1;
-pa.B = 1;
+pa.J = 2.2951e-5;
+pa.B = 1.1475e-5;
 pa.Lms = 300e-6; % gap crossing inductance
 pa.Lls = 10e-6;% leakage inductance
 pa.Ldelta = 20e-6;
