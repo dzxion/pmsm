@@ -13,7 +13,7 @@ function setup(block)
   
   %% Register number of input and output ports
   block.NumInputPorts  = 2;
-  block.NumOutputPorts = 1;
+  block.NumOutputPorts = 2;
 
   %% Setup functional port properties to dynamically
   %% inherited.
@@ -36,6 +36,7 @@ function setup(block)
 %   block.InputPort(5).DirectFeedthrough = true;
   
   block.OutputPort(1).Dimensions       = 1;
+  block.OutputPort(2).Dimensions       = 1;
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
@@ -93,6 +94,7 @@ e_v = v_fed - v_ref;
 u = -pa.Kp_v * e_v - pa.Kp_v*pa.Ki_v * sigma;
 
 block.OutputPort(1).Data = u;
+block.OutputPort(2).Data = sigma;
   
 %endfunction
 
