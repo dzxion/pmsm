@@ -23,7 +23,7 @@ pa.CarrFreq = 10;
 % pa.Kb = .015;
 
 % controller
-pa.wc = 130;
+pa.wc = 4000;
 % currentCtrlPeriod_sec =  1.0 / (pa.CarrFreq * 1000);
 pa.Kp_Iq = pa.wc*pa.Lq;
 pa.Ki_Iq = pa.R/pa.Lq;
@@ -40,4 +40,4 @@ pa.Ki_v = 140;
 pa.vq_ref = 5.0;
 pa.vd_ref = 1.0;
 pa.iq_ref = 0.1;
-pa.v_ref = 5*2*pi;
+pa.v_ref = 1*2*pi;
