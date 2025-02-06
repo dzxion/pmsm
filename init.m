@@ -17,6 +17,8 @@ pa.P = 14;% number of pole
 pa.R = 5.2;
 pa.dc = 24;
 pa.CarrFreq = 10;
+pa.Kt = 3*pa.P/4 * pa.phi_m;
+pa.Km = pa.P/2*pa.phi_m;
 
 % pa.Kf = 0.2;
 % pa.Km = .015;
