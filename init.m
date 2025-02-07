@@ -24,7 +24,7 @@ pa.Km = pa.P/2*pa.phi_m;
 % pa.Km = .015;
 % pa.Kb = .015;
 
-% controller
+% current pi controller
 pa.wc = 4000;
 % currentCtrlPeriod_sec =  1.0 / (pa.CarrFreq * 1000);
 pa.Kp_Iq = pa.wc*pa.Lq;
@@ -32,11 +32,17 @@ pa.Ki_Iq = pa.R/pa.Lq;
 pa.Kp_Id = pa.wc*pa.Ld;
 pa.Ki_Id = pa.R/pa.Ld;
 
+% speed pi controller
 pa.Kp_v = 0.35;
 pa.Ki_v = 140;
-% 
-% pa.Kp_Iq = 1;
-% pa.Ki_Iq = 1;
+
+% speed adrc controller
+pa.wo = 800;
+pa.wc = 100;
+pa.b0 = 800000;
+pa.L1 = 2*pa.wo;
+pa.L2 = pa.wo*pa.wo;
+pa.kp = 2*pi*pa.wc;
 
 % target
 pa.vq_ref = 5.0;
