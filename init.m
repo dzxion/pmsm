@@ -25,7 +25,7 @@ pa.Km = pa.P/2*pa.phi_m;
 % pa.Kb = .015;
 
 % current pi controller
-pa.wc = 4000;
+pa.wc = 1000;
 % currentCtrlPeriod_sec =  1.0 / (pa.CarrFreq * 1000);
 pa.Kp_Iq = pa.wc*pa.Lq;
 pa.Ki_Iq = pa.R/pa.Lq;
@@ -38,8 +38,8 @@ pa.Ki_v = 140;
 
 % speed adrc controller
 pa.wo = 800;
-pa.wc = 10;
-pa.b0 = 1000;
+pa.wc = 100;
+pa.b0 = 800000;
 pa.L1 = 2*pa.wo;
 pa.L2 = pa.wo*pa.wo;
 pa.kp = 2*pi*pa.wc;
