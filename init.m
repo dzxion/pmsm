@@ -1,6 +1,3 @@
-clear
-clc
-
 % plant
 pa.J = 2.2951e-5;
 pa.B = 1.1475e-5;
@@ -44,11 +41,11 @@ pa.L1 = 2*pa.wo;
 pa.L2 = pa.wo*pa.wo;
 pa.kp = 2*pi*pa.wc;
 
-% tunable parameter
-pa.Kp_v_tune = 1;
-pa.Ki_v_tune = 1;
-pa.Kp_Iq_tune= 1;
-pa.Ki_Iq_tune = 1;
+% % tunable parameter
+% pa.Kp_v_tune = 1;
+% pa.Ki_v_tune = 1;
+% pa.Kp_Iq_tune= 1;
+% pa.Ki_Iq_tune = 1;
 
 % target
 pa.vq_ref = 5.0;
