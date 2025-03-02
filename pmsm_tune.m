@@ -1,15 +1,32 @@
 
 s = tf('s');
-ST0 = slTuner('sl_pmsm',{'C_v','C_i'});
 
-% use tunable parameter
-kp_v = realp('kp_v', 1);
-ki_v = realp('ki_v', 1);
+% PI tune
+% ST0 = slTuner('sl_pmsm',{'C_v','C_i'});
+% kp_v = realp('kp_v', 1);
+% ki_v = realp('ki_v', 1);
+% kp_i = realp('kp_i', 1);
+% ki_i = realp('ki_i', 1); 
+% PI_v = tf([kp_v ki_v],[1 0]);
+% PI_i = tf([kp_i ki_i],[1 0]);
+% setBlockParam(ST0,'C_v',PI_v);
+% setBlockParam(ST0,'C_i',PI_i);
+
+% ADRC tune
+ST0 = slTuner('sl_pmsm',{'C1','C','C_i'});
+
+l1 = realp('l1', 1);
+beta1 = realp('beta1', 1);
+beta2 = realp('beta2', 1);
+b0 = realp('b0',1);
 kp_i = realp('kp_i', 1);
-ki_i = realp('ki_i', 1); 
-PI_v = tf([kp_v ki_v],[1 0]);
+ki_i = realp('ki_i', 1);
+% ADRC_C1 = tf(l1*[1 beta1 beta2],[beta1*l1+beta2 beta2*l1]);
+% ADRC_C1 = l1*(s^2+beta1*s+beta2)/((beta1*l1+beta2)*s+beta2*l1);
+% ADRC_C = tf([beta1*l1+beta2 beta2*l1],b0*[1 beta1+l1 0]);
 PI_i = tf([kp_i ki_i],[1 0]);
-setBlockParam(ST0,'C_v',PI_v);
+setBlockParam(ST0,'C1',ADRC_C1);
+setBlockParam(ST0,'C',ADRC_C);
 setBlockParam(ST0,'C_i',PI_i);
 
 showTunable(ST0)

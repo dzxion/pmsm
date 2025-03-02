@@ -41,9 +41,9 @@ pa.L1 = 2*pa.wo;
 pa.L2 = pa.wo*pa.wo;
 pa.kp = 2*pi*pa.wc;
 
-pa.l1 = 1;
+pa.l1 = pa.kp;
 pa.beta1 = pa.L1;
-pa.bata2 = pa.L2;
+pa.beta2 = pa.L2;
 
 % % tunable parameter
 % pa.Kp_v_tune = 1;
