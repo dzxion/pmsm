@@ -13,7 +13,7 @@ s = tf('s');
 % setBlockParam(ST0,'C_i',PI_i);
 
 % ADRC tune
-ST0 = slTuner('sl_pmsm',{'C1','C','C_i'});
+ST0 = slTuner('sl_pmsm',{'Gain_adrc_1','Gain_adrc_2','Gain_adrc_3','Gain_adrc_4','Gain_adrc_5','C_i'});
 
 l1 = realp('l1', 1);
 beta1 = realp('beta1', 1);
@@ -25,8 +25,14 @@ ki_i = realp('ki_i', 1);
 % ADRC_C1 = l1*(s^2+beta1*s+beta2)/((beta1*l1+beta2)*s+beta2*l1);
 % ADRC_C = tf([beta1*l1+beta2 beta2*l1],b0*[1 beta1+l1 0]);
 PI_i = tf([kp_i ki_i],[1 0]);
-setBlockParam(ST0,'C1',ADRC_C1);
-setBlockParam(ST0,'C',ADRC_C);
+% setBlockParam(ST0,'C1',ADRC_C1);
+% setBlockParam(ST0,'C',ADRC_C);
+
+setBlockParam(ST0,'Gain_adrc_1',l1);
+setBlockParam(ST0,'Gain_adrc_2',1/b0);
+setBlockParam(ST0,'Gain_adrc_3',b0);
+setBlockParam(ST0,'Gain_adrc_4',beta1);
+setBlockParam(ST0,'Gain_adrc_5',beta2);
 setBlockParam(ST0,'C_i',PI_i);
 
 showTunable(ST0)
