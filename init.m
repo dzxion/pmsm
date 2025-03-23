@@ -1,4 +1,23 @@
-% plant
+% plant (radar25)
+% pa.J = 2.2951e-5;
+% pa.B = 1.1475e-5;
+% pa.Lms = 300e-6; % gap crossing inductance
+% pa.Lls = 10e-6;% leakage inductance
+% pa.Ldelta = 20e-6;
+% Ls = 3/2*pa.Lms + pa.Lls;
+% % pa.Ld = Ls - 3/2*pa.Ldelta;
+% % pa.Lq = Ls + 3/2*pa.Ldelta;
+% pa.Lq = 2.39e-3;
+% pa.Ld = 2.10e-3;
+% pa.phi_m = 0.00469;
+% pa.P = 14;% number of pole
+% pa.R = 5.2;
+% pa.dc = 24;
+% pa.CarrFreq = 10;
+% pa.Kt = 3*pa.P/4 * pa.phi_m;
+% pa.Km = pa.P/2*pa.phi_m;
+
+% plant (m100)
 pa.J = 2.2951e-5;
 pa.B = 1.1475e-5;
 pa.Lms = 300e-6; % gap crossing inductance
@@ -7,15 +26,16 @@ pa.Ldelta = 20e-6;
 Ls = 3/2*pa.Lms + pa.Lls;
 % pa.Ld = Ls - 3/2*pa.Ldelta;
 % pa.Lq = Ls + 3/2*pa.Ldelta;
-pa.Lq = 2.39e-3;
-pa.Ld = 2.10e-3;
-pa.phi_m = 0.00469;
+pa.Lq = 19.0e-6;
+pa.Ld = 13.5e-6;
+pa.phi_m = 0.000487;
 pa.P = 14;% number of pole
-pa.R = 5.2;
-pa.dc = 24;
+pa.R = 0.12;
+pa.dc = 12;
 pa.CarrFreq = 10;
 pa.Kt = 3*pa.P/4 * pa.phi_m;
 pa.Km = pa.P/2*pa.phi_m;
+pa.c = 7.5e-8;
 
 % pa.Kf = 0.2;
 % pa.Km = .015;
@@ -30,8 +50,8 @@ pa.Kp_Id = pa.wc*pa.Ld;
 pa.Ki_Id = pa.R/pa.Ld;
 
 % speed pi controller
-pa.Kp_v = 0.35;
-pa.Ki_v = 140;
+pa.Kp_w = 0.35;
+pa.Ki_w = 140;
 
 % speed adrc controller
 pa.wo = 800;
@@ -45,6 +65,9 @@ pa.l1 = pa.kp;
 pa.beta1 = pa.L1;
 pa.beta2 = pa.L2;
 
+% voltage controller
+pa.Ki_v = 500;
+
 % % tunable parameter
 % pa.Kp_v_tune = 1;
 % pa.Ki_v_tune = 1;
@@ -52,7 +75,7 @@ pa.beta2 = pa.L2;
 % pa.Ki_Iq_tune = 1;
 
 % target
-pa.vq_ref = 5.0;
-pa.vd_ref = 1.0;
+pa.vq_ref = 1.0;
+pa.vd_ref = 0.0;
 pa.iq_ref = 0.1;
 pa.v_ref = 1*2*pi;
