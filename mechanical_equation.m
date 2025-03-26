@@ -82,7 +82,7 @@ J = pa.J;
 B = pa.B;
 c = pa.c;
 
-TL = c*omega^2;
+% TL = c*omega^2;
 omega_dot = (-B*omega + Te - TL)/J;
 block.Derivatives.Data = omega_dot;
 
