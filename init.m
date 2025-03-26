@@ -42,7 +42,7 @@ pa.Km = pa.P/2*pa.phi_m;
 % pa.Kb = .015;
 
 % current pi controller
-pa.wc = 1000;
+pa.wc = 4000;
 % currentCtrlPeriod_sec =  1.0 / (pa.CarrFreq * 1000);
 pa.Kp_Iq = pa.wc*pa.Lq;
 pa.Ki_Iq = pa.R/pa.Lq;
@@ -68,6 +68,9 @@ pa.beta2 = pa.L2;
 % voltage controller
 pa.Ki_v = 500;
 
+% position controller
+pa.Kp_p = 1.0;
+
 % % tunable parameter
 % pa.Kp_v_tune = 1;
 % pa.Ki_v_tune = 1;
@@ -75,6 +78,7 @@ pa.Ki_v = 500;
 % pa.Ki_Iq_tune = 1;
 
 % target
+pa.p_vef = 1.0;
 pa.vq_ref = 1.0;
 pa.vd_ref = 0.0;
 pa.iq_ref = 0.1;
