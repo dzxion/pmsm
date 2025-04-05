@@ -54,9 +54,12 @@ pa.Kp_w = 0.35;
 pa.Ki_w = 140;
 
 % speed adrc controller
-pa.wo = 800;
-pa.wc = 100;
-pa.b0 = 800000;
+% pa.wo = 800;
+% pa.wc = 100;
+% pa.b0 = 800000;
+pa.wo = 2660;
+pa.wc = 0.318;
+pa.b0 = 2140;
 pa.L1 = 2*pa.wo;
 pa.L2 = pa.wo*pa.wo;
 pa.kp = 2*pi*pa.wc;
@@ -82,4 +85,4 @@ pa.p_vef = 1.0;
 pa.vq_ref = 1.0;
 pa.vd_ref = 0.0;
 pa.iq_ref = 0.1;
-pa.v_ref = 1*2*pi;
+pa.v_ref = 1.0;
