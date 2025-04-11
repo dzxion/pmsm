@@ -59,7 +59,7 @@ showTunable(ST0)
 % 
 % H0 = W_tf*T;
 % H = hinfstruct(H0)%H is tuned versionof H0
-% showTunable(H)
+% showTunable(H) 
 % ST0.setBlockValue(H);
 % T = getIOTransfer(ST0,'v_{ref}','v_{fed}');  % transfer Nzc -> Nz
 % figure
