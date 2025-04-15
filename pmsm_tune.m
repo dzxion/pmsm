@@ -1,4 +1,4 @@
-
+close all
 s = tf('s');
 
 % PI tune
@@ -14,7 +14,7 @@ s = tf('s');
 
 % ADRC tune
 ST0 = slTuner('sl_pmsm',{'Gain_adrc_1','Gain_adrc_2','Gain_adrc_3','Gain_adrc_4','Gain_adrc_5'});
-% addPoint(ST0,{'v_{ref}','v_{fed}','p_{fed}'});
+addPoint(ST0,{'v_{ref}','v_{fed}','n_{v}'});
 % l1 = realp('l1', 1);
 % beta1 = realp('beta1', 1);
 % beta2 = realp('beta2', 1);
@@ -22,6 +22,9 @@ ST0 = slTuner('sl_pmsm',{'Gain_adrc_1','Gain_adrc_2','Gain_adrc_3','Gain_adrc_4'
 b0 = realp('b0',1);
 wo = realp('wo',1);
 wc = realp('wc',1);
+b0.Minimum = 0;
+wo.Minimum = 0;
+wc.Minimum = 0;
 % kp_i = realp('kp_i', 1);
 % ki_i = realp('ki_i', 1);
 % ADRC_C1 = tf(l1*[1 beta1 beta2],[beta1*l1+beta2 beta2*l1]);
@@ -68,8 +71,10 @@ showTunable(ST0)
 % step(T)
 
 % systune
-TrackReq = TuningGoal.StepTracking('v_{ref}','v_{fed}',0.5);
-ST1 = systune(ST0,TrackReq)
+TrackReq = TuningGoal.StepTracking('v_{ref}','v_{fed}',0.1);
+gmax = frd([1 1 0.01],[0 10 100]);
+RolloffReq = TuningGoal.Gain('n_{v}','v_{fed}',gmax);
+ST1 = systune(ST0,[TrackReq,RolloffReq])
 showTunable(ST1)
 % T0 = getIOTransfer(ST0,'v_{ref}','v_{fed}');
 T1 = getIOTransfer(ST1,'v_{ref}','v_{fed}');
@@ -77,4 +82,8 @@ figure
 step(T1)
 figure
 bode(T1)
+
+T2 = getIOTransfer(ST1,'n_{v}','v_{fed}');
+figure
+bode(T2)
 
