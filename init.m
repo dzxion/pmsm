@@ -7,8 +7,8 @@ pa.Ldelta = 20e-6;
 pa.Ls = 3/2*pa.Lms + pa.Lls;
 % pa.Ld = pa.Ls - 3/2*pa.Ldelta;
 % pa.Lq = pa.Ls + 3/2*pa.Ldelta;
-pa.Lq = 2.39e-3;
-pa.Ld = 2.10e-3;
+pa.Lq = 1.3e-3;
+pa.Ld = 1.15e-3;
 pa.phi_m = 0.00469;
 pa.P = 14;% number of pole
 pa.R = 5.2;
@@ -42,24 +42,24 @@ pa.Km = pa.P/2*pa.phi_m;
 % pa.Kb = .015;
 
 % current pi controller
-pa.wc = 1000;
+pa.wc = 4000;
 % currentCtrlPeriod_sec =  1.0 / (pa.CarrFreq * 1000);
 pa.Kp_Iq = pa.wc*pa.Lq;
-pa.Ki_Iq = pa.R/pa.Lq;
+pa.Ki_Iq = 0.8*pa.R/pa.Lq;
 pa.Kp_Id = pa.wc*pa.Ld;
-pa.Ki_Id = pa.R/pa.Ld;
+pa.Ki_Id = 0.8*pa.R/pa.Ld;
 
 % speed pi controller
-pa.Kp_w = 0.35;
-pa.Ki_w = 140;
+pa.Kp_w = 0.05;
+pa.Ki_w = 20;
 
 % speed adrc controller
-pa.wo = 800;
-pa.wc = 100;
-pa.b0 = 800000;
-% pa.wo = 2660;
-% pa.wc = 0.318;
-% pa.b0 = 2140;
+% pa.wo = 800;
+% pa.wc = 100;
+% pa.b0 = 800000;
+pa.wo = 12.3;
+pa.wc = 0.348;
+pa.b0 = 2260;
 pa.L1 = 2*pa.wo;
 pa.L2 = pa.wo*pa.wo;
 pa.kp = 2*pi*pa.wc;

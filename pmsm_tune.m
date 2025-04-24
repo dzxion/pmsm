@@ -14,7 +14,7 @@ s = tf('s');
 
 % ADRC tune
 ST0 = slTuner('sl_pmsm',{'Gain_adrc_1','Gain_adrc_2','Gain_adrc_3','Gain_adrc_4','Gain_adrc_5'});
-addPoint(ST0,{'v_{ref}','v_{fed}','n_{v}'});
+% addPoint(ST0,{'v_{ref}','v_{fed}','n_{v}'});
 % l1 = realp('l1', 1);
 % beta1 = realp('beta1', 1);
 % beta2 = realp('beta2', 1);
