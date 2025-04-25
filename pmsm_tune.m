@@ -87,3 +87,6 @@ T2 = getIOTransfer(ST1,'n_{v}','v_{fed}');
 figure
 bode(T2)
 
+T3 = getLoopTransfer(ST1,'u',-1); % negative-feedback loop transfer
+figure
+margin(T3)
