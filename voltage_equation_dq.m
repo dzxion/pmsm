@@ -88,6 +88,7 @@ P = pa.P;
 phi_m = pa.phi_m;
 we = P/2 * wr;
 % Ls = 3/2 * Lms + Lls;
+Ls = pa.Ls;
 
 % simplify model
 % A = [-R/Ld 0;
@@ -98,19 +99,19 @@ we = P/2 * wr;
 % d = [0;0];
 
 % ipmsm
-A = [-R/Ld we*Lq/Ld;
-     -we*Ld/Lq -R/Lq];
-B = [1/Ld 0;
-     0 1/Lq];
-u = vdq;
-d = -we*phi_m/Lq*[0;1];
+% A = [-R/Ld we*Lq/Ld;
+%      -we*Ld/Lq -R/Lq];
+% B = [1/Ld 0;
+%      0 1/Lq];
+% u = vdq;
+% d = -we*phi_m/Lq*[0;1];
 
 % spmsm
-% A = [-R/Ls we;
-%      -we -R/Ls];
-% B = 1/Ls;
-% u = vdq;
-% d = -we*phi_m/Ls*[0;1];
+A = [-R/Ls we;
+     -we -R/Ls];
+B = 1/Ls;
+u = vdq;
+d = -we*phi_m/Ls*[0;1];
 
 idq_dot = A * idq + B * u + d;
 block.Derivatives.Data = idq_dot;

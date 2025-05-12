@@ -12,7 +12,7 @@ function setup(block)
   block.NumDialogPrms = 1;
   
   %% Register number of input and output ports
-  block.NumInputPorts  = 1;
+  block.NumInputPorts  = 2;
   block.NumOutputPorts = 1;
 
   %% Setup functional port properties to dynamically
@@ -23,8 +23,8 @@ function setup(block)
   block.InputPort(1).Dimensions        = [2,1];
   block.InputPort(1).DirectFeedthrough = true;
   
-  % block.InputPort(2).Dimensions        = [1];
-  % block.InputPort(2).DirectFeedthrough = true;
+  block.InputPort(2).Dimensions        = [1];
+  block.InputPort(2).DirectFeedthrough = true;
   
   block.OutputPort(1).Dimensions       = [1];
   
@@ -71,24 +71,40 @@ function InitConditions(block)
 
 function Output(block)
 
-idq = block.InputPort(1).Data;
-id = idq(1);
-iq = idq(2);
+% % dq
+% idq = block.InputPort(1).Data;
+% id = idq(1);
+% iq = idq(2);
+% 
+% pa = block.DialogPrm(1).Data;
+% Lq = pa.Lq;
+% Ld = pa.Ld;
+% phi = pa.phi_m;
+% n = pa.P/2;
+% % Lms = pa.Lms;
+% % Lls = pa.Lls;
+% % Ldelta = pa.Ldelta;
+% 
+% % Ls = 3/2*Lms + Lls;
+% % Ld = Ls - 3/2*Ldelta;
+% % Lq = Ls + 3/2*Ldelta;
+% 
+% % ipmsm dq
+% % Te = 3*P/4 *(phi_m*iq - (Lq-Ld)*id*iq);
+% 
+% % spmsm dq
+% % Te = 3*P/4 *(phi_m*iq);
+
+% ab
+iab = block.InputPort(1).Data;
+theta = block.InputPort(2).Data;
+ia = iab(1);
+ib = iab(2);
 
 pa = block.DialogPrm(1).Data;
-Lq = pa.Lq;
-Ld = pa.Ld;
-phi_m = pa.phi_m;
-P = pa.P;
-% Lms = pa.Lms;
-% Lls = pa.Lls;
-% Ldelta = pa.Ldelta;
-
-% Ls = 3/2*Lms + Lls;
-% Ld = Ls - 3/2*Ldelta;
-% Lq = Ls + 3/2*Ldelta;
-Te = 3*P/4 *(phi_m*iq - (Lq-Ld)*id*iq);
-% Te = 3*P/4 *(phi_m*iq);
+phi = pa.phi_m;
+n = pa.P/2;
+Te = n*phi*(ib*cos(theta)-ia*sin(theta));
 
 block.OutputPort(1).Data = Te;
   

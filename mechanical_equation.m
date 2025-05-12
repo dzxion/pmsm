@@ -80,8 +80,8 @@ omega = block.ContStates.Data;
 pa = block.DialogPrm(1).Data;
 J = pa.J;
 B = pa.B;
-c = pa.c;
 
+% c = pa.c;
 % TL = c*omega^2;
 omega_dot = (-B*omega + Te - TL)/J;
 block.Derivatives.Data = omega_dot;

@@ -72,11 +72,11 @@ function InitConditions(block)
 function Output(block)
 
 fdq = block.InputPort(1).Data;
-theta_r = block.InputPort(2).Data;
+theta_e = block.InputPort(2).Data;
 pa = block.DialogPrm(1).Data;
 
 P = pa.P;
-theta_e = P/2 * theta_r;
+% theta_e = P/2 * theta_r;
 A = [cos(theta_e) -sin(theta_e);
      sin(theta_e) cos(theta_e)];
 fab = A*fdq;
