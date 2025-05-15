@@ -1,4 +1,4 @@
-function voltage_equation_abc(block)
+function voltage_dynamic_abc(block)
 % Level-2 MATLAB file S-Function.
 
 %   Copyright 1990-2009 The MathWorks, Inc.

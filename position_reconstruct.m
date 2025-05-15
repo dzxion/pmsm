@@ -1,7 +1,7 @@
-function mechanical_equation(block)
+function position_reconstruct(block)
 % Level-2 MATLAB file S-Function.
 
-%   Copyright 1990-2009 The MathWorks, Inc.
+%   Copyright 1990-2009 The MathWorks, Inc.S
 
   setup(block);
   
@@ -20,11 +20,11 @@ function setup(block)
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
  
-  block.InputPort(1).Dimensions        = [1];
-  block.InputPort(1).DirectFeedthrough = false;
+  block.InputPort(1).Dimensions        = [2,1];
+  block.InputPort(1).DirectFeedthrough = true;
   
-  block.InputPort(2).Dimensions        = [1];
-  block.InputPort(2).DirectFeedthrough = false;
+  block.InputPort(2).Dimensions        = [2,1];
+  block.InputPort(2).DirectFeedthrough = true;
   
   block.OutputPort(1).Dimensions       = [1];
   
@@ -32,7 +32,7 @@ function setup(block)
   block.SampleTimes = [0 0];
   
   %% Setup Dwork
-  block.NumContStates = 1;
+  block.NumContStates = 0;
   
   %% Set the block simStateCompliance to default (i.e., same as a built-in block)
   block.SimStateCompliance = 'DefaultSimState';
@@ -43,6 +43,7 @@ function setup(block)
   block.RegBlockMethod('Outputs',                 @Output);  
 %   block.RegBlockMethod('Update',                  @Update); 
   block.RegBlockMethod('Derivatives',             @Derivative);
+  % block.RegBlockMethod('SetInputPortSamplingMode',@SetInputPortSamplingMode);
   
 %endfunction
 
@@ -62,31 +63,26 @@ function InitConditions(block)
 
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
-block.ContStates.Data = [0];
+% block.ContStates.Data = [0;
+%                          0;
+%                          0;];
   
 %endfunction
 
 function Output(block)
 
-block.OutputPort(1).Data = block.ContStates.Data;
+x_hat = block.InputPort(1).Data;
+iab = block.InputPort(2).Data;
+pa = block.DialogPrm(1).Data;
+
+L = pa.Ls;
+theta_hat = atan2(x_hat(2)-L*iab(2),x_hat(1)-L*iab(1));
+
+block.OutputPort(1).Data = mod(theta_hat, 2*pi);
   
 %endfunction
 
 function Derivative(block)
-
-Te = block.InputPort(1).Data;
-TL = block.InputPort(2).Data;
-omega = block.ContStates.Data;
-pa = block.DialogPrm(1).Data;
-J = pa.J;
-B = pa.B;
-
-% c = pa.c;
-% TL = c*omega^2;
-omega_dot = (-B*omega + Te - TL)/J;
-block.Derivatives.Data = omega_dot;
-
-% machanical equation 
 
 %endfunction
 
@@ -94,5 +90,15 @@ function Update(block)
 
 %   block.Dwork(1).Data = block.InputPort(1).Data;
   
+%endfunction
+
+% function SetInputPortSamplingMode(block, idx, fd)
+% 
+% block.InputPort(idx).SamplingMode = fd;
+% block.InputPort(idx).SamplingMode = fd;
+% 
+% block.OutputPort(1).SamplingMode = fd;
+% block.OutputPort(2).SamplingMode = fd;
+
 %endfunction
 
