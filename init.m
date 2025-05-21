@@ -1,3 +1,4 @@
+close all
 % plant (radar25)
 pa.J = 2.2951e-5;
 pa.B = 1.1475e-5;

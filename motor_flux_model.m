@@ -1,4 +1,4 @@
-function position_reconstruct(block)
+function motor_flux_model(block)
 % Level-2 MATLAB file S-Function.
 
 %   Copyright 1990-2009 The MathWorks, Inc.S
@@ -20,13 +20,13 @@ function setup(block)
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
  
-  block.InputPort(1).Dimensions        = [2,1];
+  block.InputPort(1).Dimensions        = [2,1];% iab
   block.InputPort(1).DirectFeedthrough = true;
   
-  block.InputPort(2).Dimensions        = [2,1];
+  block.InputPort(2).Dimensions        = [1];% theta
   block.InputPort(2).DirectFeedthrough = true;
   
-  block.OutputPort(1).Dimensions       = [1];
+  block.OutputPort(1).Dimensions       = [2,1];% flux
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
@@ -71,14 +71,17 @@ function InitConditions(block)
 
 function Output(block)
 
-x = block.InputPort(1).Data;
-iab = block.InputPort(2).Data;
+iab = block.InputPort(1).Data;
+theta = block.InputPort(2).Data;
 pa = block.DialogPrm(1).Data;
 
 L = pa.Ls;
-theta_hat = atan2(x(2)-L*iab(2),x(1)-L*iab(1));
+phi = pa.phi_m;
 
-block.OutputPort(1).Data = mod(theta_hat, 2*pi);
+ctheta = [cos(theta);sin(theta)];
+x = L*iab+phi*ctheta;
+
+block.OutputPort(1).Data = x;
   
 %endfunction
 
