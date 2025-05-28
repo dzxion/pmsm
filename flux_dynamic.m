@@ -1,4 +1,4 @@
-function nonlinear_observer(block)
+function flux_dynamic(block)
 % Level-2 MATLAB file S-Function.
 
 %   Copyright 1990-2009 The MathWorks, Inc.S
@@ -74,16 +74,11 @@ function InitConditions(block)
 
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
-
-theta = pi/2;
-ctheta = [cos(theta);sin(theta)];
 pa = block.DialogPrm(1).Data;
 phi = pa.phi_m;
+ctheta = [1;0];
 x = phi*ctheta;
 block.ContStates.Data = x;
-
-% block.ContStates.Data = [0;
-%                          0];
   
 %endfunction
 
@@ -106,8 +101,7 @@ L = pa.Ls;
 Rs = pa.R;
 
 y12 = -Rs*iab+uab;
-x_hat_dot = y12 + gamma/2*(x_hat-L*iab)*(phi^2-(x_hat-L*iab)'*(x_hat-L*iab));
-% x_hat_dot = y12;
+x_hat_dot = y12;
 block.Derivatives.Data = x_hat_dot;
 
 %endfunction

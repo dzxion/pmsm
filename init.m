@@ -82,7 +82,7 @@ pa.Kp_p = 1.0;
 % pa.Ki_Iq_tune = 1;
 
 % observer
-pa.gamma = 1.0;
+pa.gamma = 1000000;
 
 % target
 pa.p_vef = 1.0;
