@@ -1,7 +1,7 @@
-function voltage_dynamic_ab(block)
+function y_temp(block)
 % Level-2 MATLAB file S-Function.
 
-%   Copyright 1990-2009 The MathWorks, Inc.
+%   Copyright 1990-2009 The MathWorks, Inc.S
 
   setup(block);
   
@@ -12,7 +12,7 @@ function setup(block)
   block.NumDialogPrms = 1;
   
   %% Register number of input and output ports
-  block.NumInputPorts  = 3;
+  block.NumInputPorts  = 2;
   block.NumOutputPorts = 1;
 
   %% Setup functional port properties to dynamically
@@ -20,14 +20,11 @@ function setup(block)
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
  
-  block.InputPort(1).Dimensions        = [2,1];% vab
-  block.InputPort(1).DirectFeedthrough = false;
+  block.InputPort(1).Dimensions        = [2,1];
+  block.InputPort(1).DirectFeedthrough = true;
   
-  block.InputPort(2).Dimensions        = [1];% angular velocity
-  block.InputPort(2).DirectFeedthrough = false;
-
-  block.InputPort(3).Dimensions        = [1];% rotor flux angle
-  block.InputPort(3).DirectFeedthrough = false;
+  block.InputPort(2).Dimensions        = [1];
+  block.InputPort(2).DirectFeedthrough = true;
   
   block.OutputPort(1).Dimensions       = [2,1];
   
@@ -35,7 +32,7 @@ function setup(block)
   block.SampleTimes = [0 0];
   
   %% Setup Dwork
-  block.NumContStates = 2;
+  block.NumContStates = 0;
   
   %% Set the block simStateCompliance to default (i.e., same as a built-in block)
   block.SimStateCompliance = 'DefaultSimState';
@@ -46,6 +43,7 @@ function setup(block)
   block.RegBlockMethod('Outputs',                 @Output);  
 %   block.RegBlockMethod('Update',                  @Update); 
   block.RegBlockMethod('Derivatives',             @Derivative);
+  % block.RegBlockMethod('SetInputPortSamplingMode',@SetInputPortSamplingMode);
   
 %endfunction
 
@@ -65,60 +63,27 @@ function InitConditions(block)
 
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
-block.ContStates.Data = [0;0];
+% block.ContStates.Data = [0;
+%                          0;
+%                          0;];
   
 %endfunction
 
 function Output(block)
 
-block.OutputPort(1).Data = block.ContStates.Data;
+i = block.InputPort(1).Data;
+w = block.InputPort(2).Data;
+pa = block.DialogPrm(1).Data;
+
+J = [0 -1;1 0];
+np = pa.P/2;
+temp = np*w*J*i;
+
+block.OutputPort(1).Data = temp;
   
 %endfunction
 
 function Derivative(block)
-
-vab = block.InputPort(1).Data;
-wr = block.InputPort(2).Data;
-theta = block.InputPort(3).Data;
-
-iab = block.ContStates.Data;
-pa = block.DialogPrm(1).Data;
-
-Ld = pa.Ld;
-Lq = pa.Lq;
-% Lms = pa.Lms;
-% Lls = pa.Lls;
-R = pa.R;
-P = pa.P;
-phi_m = pa.phi_m;
-we = P/2 * wr;
-% Ls = 3/2 * Lms + Lls;
-L = pa.Ls;
-
-% simplify model
-% A = [-R/Ld 0;
-%      0 -R/Lq];
-% B = [1/Ld 0;
-%      0 1/Lq];
-% u = vdq;
-% d = [0;0];
-
-% ipmsm
-% A = [-R/Ld we*Lq/Ld;
-%      -we*Ld/Lq -R/Lq];
-% B = [1/Ld 0;
-%      0 1/Lq];
-% u = vdq;
-% d = -we*phi_m/Lq*[0;1];
-
-% spmsm
-A = -R/L;
-B = 1/L;
-u = vab;
-d = we*phi_m/L*[sin(theta);-cos(theta)];
- 
-iab_dot = A * iab + B * u + d;
-block.Derivatives.Data = iab_dot;
 
 %endfunction
 
@@ -126,5 +91,15 @@ function Update(block)
 
 %   block.Dwork(1).Data = block.InputPort(1).Data;
   
+%endfunction
+
+% function SetInputPortSamplingMode(block, idx, fd)
+% 
+% block.InputPort(idx).SamplingMode = fd;
+% block.InputPort(idx).SamplingMode = fd;
+% 
+% block.OutputPort(1).SamplingMode = fd;
+% block.OutputPort(2).SamplingMode = fd;
+
 %endfunction
 

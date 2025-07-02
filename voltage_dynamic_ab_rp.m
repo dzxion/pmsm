@@ -1,7 +1,7 @@
-function nonlinear_observer(block)
+function voltage_dynamic_ab_rp(block)
 % Level-2 MATLAB file S-Function.
 
-%   Copyright 1990-2009 The MathWorks, Inc.S
+%   Copyright 1990-2009 The MathWorks, Inc.
 
   setup(block);
   
@@ -12,38 +12,30 @@ function setup(block)
   block.NumDialogPrms = 1;
   
   %% Register number of input and output ports
-  block.NumInputPorts  = 2;
+  block.NumInputPorts  = 3;
   block.NumOutputPorts = 1;
 
   %% Setup functional port properties to dynamically
   %% inherited.
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
-  
-  block.InputPort(1).Dimensions        = [2,1];% uab
-  block.InputPort(1).DirectFeedthrough = false;
  
-  block.InputPort(2).Dimensions        = [2,1];% iab
+  block.InputPort(1).Dimensions        = [2,1];% vab
+  block.InputPort(1).DirectFeedthrough = false;
+  
+  block.InputPort(2).Dimensions        = [1];% angular velocity
   block.InputPort(2).DirectFeedthrough = false;
-  
-%   block.InputPort(3).Dimensions        = [3,1];% v
-%   block.InputPort(3).DirectFeedthrough = true;
-%   
-%   block.InputPort(4).Dimensions        = [3,3];% R
-%   block.InputPort(4).DirectFeedthrough = true;
-  
-%   block.InputPort(5).Dimensions        = [3,1];
-%   block.InputPort(5).DirectFeedthrough = true;
+
+  block.InputPort(3).Dimensions        = [1];% rotor flux angle
+  block.InputPort(3).DirectFeedthrough = false;
   
   block.OutputPort(1).Dimensions       = [2,1];
-
-  % block.OutputPort(2).Dimensions       = [2,1];
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
   
   %% Setup Dwork
-  block.NumContStates = 2;
+  block.NumContStates = 6;
   
   %% Set the block simStateCompliance to default (i.e., same as a built-in block)
   block.SimStateCompliance = 'DefaultSimState';
@@ -54,7 +46,6 @@ function setup(block)
   block.RegBlockMethod('Outputs',                 @Output);  
 %   block.RegBlockMethod('Update',                  @Update); 
   block.RegBlockMethod('Derivatives',             @Derivative);
-%   block.RegBlockMethod('SetInputPortSamplingMode',@SetInputPortSamplingMode);
   
 %endfunction
 
@@ -74,41 +65,40 @@ function InitConditions(block)
 
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
-
-theta = pi/2;
-ctheta = [cos(theta);sin(theta)];
-pa = block.DialogPrm(1).Data;
-phi = pa.phi_m;
-x = phi*ctheta;
-block.ContStates.Data = x;
-
-% block.ContStates.Data = [0;
-%                          0];
+block.ContStates.Data = zeros(6,1);
   
 %endfunction
 
 function Output(block)
 
-x_hat = block.ContStates.Data;
-block.OutputPort(1).Data = x_hat;
+block.OutputPort(1).Data = block.ContStates.Data(5:6);
   
 %endfunction
 
 function Derivative(block)
 
-pa = block.DialogPrm(1).Data;
-uab = block.InputPort(1).Data;
-iab = block.InputPort(2).Data;
-x_hat = block.ContStates.Data;
-gamma = pa.gamma;
-phi = pa.phi_m;
-L = pa.Ls;
-Rs = pa.R;
+v = block.InputPort(1).Data;
+w = block.InputPort(2).Data;
+theta = block.InputPort(3).Data;
 
-y12 = -Rs*iab+uab;
-x_hat_dot = y12 + gamma/2*(x_hat-L*iab)*(phi^2-(x_hat-L*iab)'*(x_hat-L*iab));
-% x_hat_dot = y12;
-block.Derivatives.Data = x_hat_dot;
+z1 = block.ContStates.Data(1:2);
+z2 = block.ContStates.Data(3:4);
+i = block.ContStates.Data(5:6);
+pa = block.DialogPrm(1).Data;
+
+R = pa.R;
+np = pa.P/2;
+phi_m = pa.phi_m;
+L = pa.Ls;
+lamda0 = phi_m*[1;0];
+
+J = [0 -1;1 0];
+phi = [-np*w*J v-np*w*J*z1 np*w*J*z2-i];
+eta = 1/L*[lamda0;1;R];
+
+i_dot = phi*eta + np*w*J*i;
+
+block.Derivatives.Data = [v;i;i_dot];
 
 %endfunction
 
@@ -116,16 +106,5 @@ function Update(block)
 
 %   block.Dwork(1).Data = block.InputPort(1).Data;
   
-%endfunction
-
-% function SetInputPortSamplingMode(block, idx, fd)
-% 
-% block.InputPort(idx).SamplingMode = fd;
-% block.InputPort(idx).SamplingMode = fd;
-% 
-% block.OutputPort(1).SamplingMode = fd;
-% block.OutputPort(2).SamplingMode = fd;
-% block.OutputPort(3).SamplingMode = fd;
-
 %endfunction
 

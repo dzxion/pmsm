@@ -1,7 +1,7 @@
-function voltage_dynamic_ab(block)
+function nonlinear_observer_ortega2011(block)
 % Level-2 MATLAB file S-Function.
 
-%   Copyright 1990-2009 The MathWorks, Inc.
+%   Copyright 1990-2009 The MathWorks, Inc.S
 
   setup(block);
   
@@ -12,24 +12,32 @@ function setup(block)
   block.NumDialogPrms = 1;
   
   %% Register number of input and output ports
-  block.NumInputPorts  = 3;
+  block.NumInputPorts  = 2;
   block.NumOutputPorts = 1;
 
   %% Setup functional port properties to dynamically
   %% inherited.
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
- 
-  block.InputPort(1).Dimensions        = [2,1];% vab
-  block.InputPort(1).DirectFeedthrough = false;
   
-  block.InputPort(2).Dimensions        = [1];% angular velocity
+  block.InputPort(1).Dimensions        = [2,1];% uab
+  block.InputPort(1).DirectFeedthrough = false;
+ 
+  block.InputPort(2).Dimensions        = [2,1];% iab
   block.InputPort(2).DirectFeedthrough = false;
-
-  block.InputPort(3).Dimensions        = [1];% rotor flux angle
-  block.InputPort(3).DirectFeedthrough = false;
+  
+%   block.InputPort(3).Dimensions        = [3,1];% v
+%   block.InputPort(3).DirectFeedthrough = true;
+%   
+%   block.InputPort(4).Dimensions        = [3,3];% R
+%   block.InputPort(4).DirectFeedthrough = true;
+  
+%   block.InputPort(5).Dimensions        = [3,1];
+%   block.InputPort(5).DirectFeedthrough = true;
   
   block.OutputPort(1).Dimensions       = [2,1];
+
+  % block.OutputPort(2).Dimensions       = [2,1];
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
@@ -46,6 +54,7 @@ function setup(block)
   block.RegBlockMethod('Outputs',                 @Output);  
 %   block.RegBlockMethod('Update',                  @Update); 
   block.RegBlockMethod('Derivatives',             @Derivative);
+%   block.RegBlockMethod('SetInputPortSamplingMode',@SetInputPortSamplingMode);
   
 %endfunction
 
@@ -65,60 +74,41 @@ function InitConditions(block)
 
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
-block.ContStates.Data = [0;0];
+
+theta = pi/2;
+ctheta = [cos(theta);sin(theta)];
+pa = block.DialogPrm(1).Data;
+phi = pa.phi_m;
+x = phi*ctheta;
+block.ContStates.Data = x;
+
+% block.ContStates.Data = [0;
+%                          0];
   
 %endfunction
 
 function Output(block)
 
-block.OutputPort(1).Data = block.ContStates.Data;
+x_hat = block.ContStates.Data;
+block.OutputPort(1).Data = x_hat;
   
 %endfunction
 
 function Derivative(block)
 
-vab = block.InputPort(1).Data;
-wr = block.InputPort(2).Data;
-theta = block.InputPort(3).Data;
-
-iab = block.ContStates.Data;
 pa = block.DialogPrm(1).Data;
-
-Ld = pa.Ld;
-Lq = pa.Lq;
-% Lms = pa.Lms;
-% Lls = pa.Lls;
-R = pa.R;
-P = pa.P;
-phi_m = pa.phi_m;
-we = P/2 * wr;
-% Ls = 3/2 * Lms + Lls;
+uab = block.InputPort(1).Data;
+iab = block.InputPort(2).Data;
+x_hat = block.ContStates.Data;
+gamma = pa.gamma;
+phi = pa.phi_m;
 L = pa.Ls;
+Rs = pa.R;
 
-% simplify model
-% A = [-R/Ld 0;
-%      0 -R/Lq];
-% B = [1/Ld 0;
-%      0 1/Lq];
-% u = vdq;
-% d = [0;0];
-
-% ipmsm
-% A = [-R/Ld we*Lq/Ld;
-%      -we*Ld/Lq -R/Lq];
-% B = [1/Ld 0;
-%      0 1/Lq];
-% u = vdq;
-% d = -we*phi_m/Lq*[0;1];
-
-% spmsm
-A = -R/L;
-B = 1/L;
-u = vab;
-d = we*phi_m/L*[sin(theta);-cos(theta)];
- 
-iab_dot = A * iab + B * u + d;
-block.Derivatives.Data = iab_dot;
+y12 = -Rs*iab+uab;
+x_hat_dot = y12 + gamma/2*(x_hat-L*iab)*(phi^2-(x_hat-L*iab)'*(x_hat-L*iab));
+% x_hat_dot = y12;
+block.Derivatives.Data = x_hat_dot;
 
 %endfunction
 
@@ -126,5 +116,16 @@ function Update(block)
 
 %   block.Dwork(1).Data = block.InputPort(1).Data;
   
+%endfunction
+
+% function SetInputPortSamplingMode(block, idx, fd)
+% 
+% block.InputPort(idx).SamplingMode = fd;
+% block.InputPort(idx).SamplingMode = fd;
+% 
+% block.OutputPort(1).SamplingMode = fd;
+% block.OutputPort(2).SamplingMode = fd;
+% block.OutputPort(3).SamplingMode = fd;
+
 %endfunction
 

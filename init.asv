@@ -40,14 +40,20 @@ pa.Km = pa.P/2*pa.phi_m;
 % pa.c = 7.5e-8;
 
 % plant (Bobtsov2015 ijacsp)
-pa.J = 60e-6;
-pa.B = 0;
-pa.Ls = 40.03e-3;
-pa.Ld = pa.Ls;
-pa.Lq = pa.Ls;
-pa.phi_m = 0.2086;% Magnetic flux (Wb)
-pa.P = 10;        % number of pole
-pa.R = 8.875;
+pa.J = 2.2951e-5;
+pa.B = 1.1475e-5;
+pa.Ls = 
+% pa.Ld = pa.Ls - 3/2*pa.Ldelta;
+% pa.Lq = pa.Ls + 3/2*pa.Ldelta;
+pa.Lq = 1.3e-3;
+pa.Ld = 1.15e-3;
+pa.phi_m = 0.00469;
+pa.P = 14;% number of pole
+pa.R = 5.2;
+pa.dc = 24;
+pa.CarrFreq = 10;
+pa.Kt = 3*pa.P/4 * pa.phi_m;
+pa.Km = pa.P/2*pa.phi_m;
 
 % pa.Kf = 0.2;
 % pa.Km = .015;
@@ -96,8 +102,8 @@ pa.Kp_p = 1.0;
 pa.gamma = 1000000;
 
 % observer Bobtsov2015 ijacsp
-pa.alpha = 100;
-pa.Gamma = diag([1,1,0,0]);
+pa.alpha = 1;
+pa.Gamma = diag([1,1,1,1]);
 
 % target
 pa.p_vef = 1.0;
