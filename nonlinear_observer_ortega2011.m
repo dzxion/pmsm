@@ -13,7 +13,7 @@ function setup(block)
   
   %% Register number of input and output ports
   block.NumInputPorts  = 2;
-  block.NumOutputPorts = 1;
+  block.NumOutputPorts = 2;
 
   %% Setup functional port properties to dynamically
   %% inherited.
@@ -35,9 +35,8 @@ function setup(block)
 %   block.InputPort(5).Dimensions        = [3,1];
 %   block.InputPort(5).DirectFeedthrough = true;
   
-  block.OutputPort(1).Dimensions       = [2,1];
-
-  % block.OutputPort(2).Dimensions       = [2,1];
+  block.OutputPort(1).Dimensions       = [1];% estimated theta
+  block.OutputPort(2).Dimensions       = [2,1];% estimated flux
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
@@ -80,17 +79,22 @@ ctheta = [cos(theta);sin(theta)];
 pa = block.DialogPrm(1).Data;
 phi = pa.phi_m;
 x = phi*ctheta;
-block.ContStates.Data = x;
+% block.ContStates.Data = x;
+block.ContStates.Data = zeros(2,1);
 
-% block.ContStates.Data = [0;
-%                          0];
   
 %endfunction
 
 function Output(block)
 
 x_hat = block.ContStates.Data;
-block.OutputPort(1).Data = x_hat;
+iab = block.InputPort(2).Data;
+pa = block.DialogPrm(1).Data;
+L = pa.Ls;
+theta_hat = atan2(x_hat(2)-L*iab(2),x_hat(1)-L*iab(1));
+block.OutputPort(1).Data = mod(theta_hat, 2*pi);
+
+block.OutputPort(2).Data = x_hat;
   
 %endfunction
 

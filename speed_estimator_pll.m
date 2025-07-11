@@ -1,4 +1,4 @@
-function nonlinear_observer_Bobtsov2015_auto(block)
+function speed_estimator_pll(block)
 % Level-2 MATLAB file S-Function.
 
 %   Copyright 1990-2009 The MathWorks, Inc.S
@@ -12,19 +12,19 @@ function setup(block)
   block.NumDialogPrms = 1;
   
   %% Register number of input and output ports
-  block.NumInputPorts  = 2;
-  block.NumOutputPorts = 2;
+  block.NumInputPorts  = 1;
+  block.NumOutputPorts = 1;
 
   %% Setup functional port properties to dynamically
   %% inherited.
   block.SetPreCompInpPortInfoToDynamic;
   block.SetPreCompOutPortInfoToDynamic;
   
-  block.InputPort(1).Dimensions        = [2,1];% uab
+  block.InputPort(1).Dimensions        = [1];% theta_hat
   block.InputPort(1).DirectFeedthrough = false;
- 
-  block.InputPort(2).Dimensions        = [2,1];% iab
-  block.InputPort(2).DirectFeedthrough = false;
+
+  % block.InputPort(2).Dimensions        = [1];% iab
+  % block.InputPort(2).DirectFeedthrough = false;
   
 %   block.InputPort(3).Dimensions        = [3,1];% v
 %   block.InputPort(3).DirectFeedthrough = true;
@@ -35,14 +35,14 @@ function setup(block)
 %   block.InputPort(5).Dimensions        = [3,1];
 %   block.InputPort(5).DirectFeedthrough = true;
   
-  block.OutputPort(1).Dimensions       = [1];% estimated theta
-  block.OutputPort(2).Dimensions       = [2,1];% estimated flux
+  block.OutputPort(1).Dimensions       = [1];% estimated speed
+  % block.OutputPort(2).Dimensions       = [2,1];% estimated flux
   
   %% Set block sample time to continuous
   block.SampleTimes = [0 0];
   
   %% Setup Dwork
-  block.NumContStates = 9;
+  block.NumContStates = 2;
   
   %% Set the block simStateCompliance to default (i.e., same as a built-in block)
   block.SimStateCompliance = 'DefaultSimState';
@@ -74,56 +74,40 @@ function InitConditions(block)
 %% Initialize Dwork
 %   block.Dwork(1).Data = block.DialogPrm(1).Data;
 
-% theta = pi/2;
-% ctheta = [cos(theta);sin(theta)];
-% pa = block.DialogPrm(1).Data;
-% phi = pa.phi_m;
-% x = phi*ctheta;
-block.ContStates.Data = zeros(9,1);
+% block.ContStates.Data = x;
+block.ContStates.Data = zeros(2,1);
 
-% block.ContStates.Data = [0;
-%                          0];
   
 %endfunction
 
 function Output(block)
 
+x_hat = block.ContStates.Data;
+iab = block.InputPort(2).Data;
 pa = block.DialogPrm(1).Data;
-R = pa.R;
 L = pa.Ls;
-np = pa.P/2;
-Xi = block.ContStates.Data;
-i = block.InputPort(2).Data;
-q = Xi(1:2)-R*Xi(3:4)-L*i;
-theta_hat = atan2(q(2)+Xi(9),q(1)+Xi(8));
-% block.OutputPort(1).Data = theta_hat;
-block.OutputPort(1).Data = mod(theta_hat, 2*pi);
+theta_hat = atan2(x_hat(2)-L*iab(2),x_hat(1)-L*iab(1));
 
-lamda_hat = L*i + q + Xi(8:9);
-block.OutputPort(2).Data = lamda_hat;
+w_hat = 
+block.OutputPort(1).Data = w_hat;
   
 %endfunction
 
 function Derivative(block)
 
 pa = block.DialogPrm(1).Data;
-u = block.InputPort(1).Data;
-i = block.InputPort(2).Data;
-Xi = block.ContStates.Data;
-alpha = pa.alpha;
-Gamma = pa.Gamma;
+uab = block.InputPort(1).Data;
+iab = block.InputPort(2).Data;
+x_hat = block.ContStates.Data;
+gamma = pa.gamma;
+phi = pa.phi_m;
 L = pa.Ls;
-R = pa.R;
+Rs = pa.R;
 
-Xi_dot = zeros(9,1);
-Xi_dot(1:4) = [u;i];
-q = Xi(1:2)-R*Xi(3:4)-L*i;
-Xi_dot(5) = -alpha*(Xi(5)+q'*q);
-Xi_dot(6:7) = -alpha*(Xi(6:7)-2*q);
-y = -alpha*(q'*q+Xi(5));
-Omega = alpha*(2*q-Xi(6:7));
-Xi_dot(8:9) = Gamma*Omega*(y-Omega'*Xi(8:9));
-block.Derivatives.Data = Xi_dot;
+y12 = -Rs*iab+uab;
+x_hat_dot = y12 + gamma/2*(x_hat-L*iab)*(phi^2-(x_hat-L*iab)'*(x_hat-L*iab));
+% x_hat_dot = y12;
+block.Derivatives.Data = x_hat_dot;
 
 %endfunction
 

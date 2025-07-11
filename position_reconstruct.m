@@ -77,7 +77,6 @@ pa = block.DialogPrm(1).Data;
 
 L = pa.Ls;
 theta_hat = atan2(x(2)-L*iab(2),x(1)-L*iab(1));
-
 block.OutputPort(1).Data = mod(theta_hat, 2*pi);
   
 %endfunction

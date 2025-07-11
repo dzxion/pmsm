@@ -30,7 +30,7 @@ function setup(block)
   block.InputPort(3).DirectFeedthrough = false;
 %   
   block.InputPort(4).Dimensions        = [2,1];% y
-  block.InputPort(4).DirectFeedthrough = true;
+  block.InputPort(4).DirectFeedthrough = false;
   
 %   block.InputPort(5).Dimensions        = [3,1];
 %   block.InputPort(5).DirectFeedthrough = true;
@@ -80,10 +80,14 @@ function InitConditions(block)
 pa = block.DialogPrm(1).Data;
 L = pa.Ls;
 R = pa.R;
+phi_m = pa.phi_m;
 eta3 = 1/L;
 eta4 = R/L;
+eta1 = phi_m/L;
+eta2 = 0;
 
-block.ContStates.Data = [zeros(12,1);1;-1;eta3;eta4];
+% block.ContStates.Data = [zeros(12,1);eta1;eta2;2*eta3;0.5*eta4];
+block.ContStates.Data = [zeros(12,1);1;-1;0.5*eta3;0.2*eta4];
 
 % block.ContStates.Data = [0;
 %                          0];

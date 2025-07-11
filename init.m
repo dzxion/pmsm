@@ -1,23 +1,23 @@
 close all
 
 % plant (radar25)
-pa.J = 2.2951e-5;
-pa.B = 1.1475e-5;
+% pa.J = 2.2951e-5;
+% pa.B = 1.1475e-5;
 pa.Lms = 300e-6; % gap crossing inductance
 pa.Lls = 10e-6;% leakage inductance
 pa.Ldelta = 20e-6;
-pa.Ls = 3/2*pa.Lms + pa.Lls;
-% pa.Ld = pa.Ls - 3/2*pa.Ldelta;
-% pa.Lq = pa.Ls + 3/2*pa.Ldelta;
-pa.Lq = 1.3e-3;
-pa.Ld = 1.15e-3;
-pa.phi_m = 0.00469;
-pa.P = 14;% number of pole
-pa.R = 5.2;
-pa.dc = 24;
-pa.CarrFreq = 10;
-pa.Kt = 3*pa.P/4 * pa.phi_m;
-pa.Km = pa.P/2*pa.phi_m;
+% pa.Ls = 3/2*pa.Lms + pa.Lls;
+% % pa.Ld = pa.Ls - 3/2*pa.Ldelta;
+% % pa.Lq = pa.Ls + 3/2*pa.Ldelta;
+% pa.Lq = 1.3e-3;
+% pa.Ld = 1.15e-3;
+% pa.phi_m = 0.00469;
+% pa.P = 14;% number of pole
+% pa.R = 5.2;
+% pa.dc = 24;
+% pa.CarrFreq = 10;
+% pa.Kt = 3*pa.P/4 * pa.phi_m;
+% pa.Km = pa.P/2*pa.phi_m;
 
 % plant (m100)
 % pa.J = 2.2951e-5;
@@ -93,11 +93,15 @@ pa.Kp_p = 1.0;
 % pa.Ki_Iq_tune = 1;
 
 % observer ortega2011
-pa.gamma = 1000000;
+pa.gamma = 100;
 
 % observer Bobtsov2015 ijacsp
+% pa.alpha = 500;
+% pa.Gamma = diag([50,20,20,20]);
+
+% observer Bobtsov2015 auto
 pa.alpha = 100;
-pa.Gamma = diag([1,1,0,0]);
+pa.Gamma = diag([0.1,0.1]);
 
 % target
 pa.p_vef = 1.0;
